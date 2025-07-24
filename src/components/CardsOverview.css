@@ -1,0 +1,33 @@
+/* Add this to your dashboard CSS file */
+.stats-container {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.stat-card {
+  flex: 1 1 200px;
+  background-color: #1f2937;
+  color: #e6edf3;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #c9d1d9;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-top: 0.4rem;
+}
+
+.stat-sub {
+  font-size: 0.8rem;
+  color: #8899a6;
+  margin-top: 0.25rem;
+}

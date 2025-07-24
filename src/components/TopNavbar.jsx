@@ -1,8 +1,9 @@
+// src/components/TopNavbar.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { BarChart2, Download, Settings } from "lucide-react";
 import "./TopNavbar.css";
 
-const TopNavbar = ({ selectedSymbol, onSymbolChange }) => {
+const TopNavbar = ({ selectedSymbol, onSymbolChange, viewType, onViewChange }) => {
   const [allSymbols, setAllSymbols] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredSymbols, setFilteredSymbols] = useState([]);
@@ -34,7 +35,6 @@ const TopNavbar = ({ selectedSymbol, onSymbolChange }) => {
     setFilteredSymbols(filtered);
   }, [searchTerm, allSymbols]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -53,7 +53,6 @@ const TopNavbar = ({ selectedSymbol, onSymbolChange }) => {
 
   return (
     <div className="top-panel">
-      {/* Left Section */}
       <div className="panel-left">
         <div className="icon-box">
           <BarChart2 size={20} />
@@ -64,7 +63,6 @@ const TopNavbar = ({ selectedSymbol, onSymbolChange }) => {
         </div>
       </div>
 
-      {/* Center + Right Section */}
       <div className="panel-right">
         <div className="custom-dropdown" ref={dropdownRef}>
           <div
@@ -98,9 +96,15 @@ const TopNavbar = ({ selectedSymbol, onSymbolChange }) => {
         </div>
 
         <div className="view-toggle">
-          <button className="view-btn active">Day</button>
-          <button className="view-btn">Week</button>
-          <button className="view-btn">Month</button>
+          {["day", "week", "month"].map((view) => (
+            <button
+              key={view}
+              className={`view-btn ${viewType === view ? "active" : ""}`}
+              onClick={() => onViewChange(view)}
+            >
+              {view.charAt(0).toUpperCase() + view.slice(1)}
+            </button>
+          ))}
         </div>
 
         <span className="live-badge">LIVE</span>
