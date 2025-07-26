@@ -13,7 +13,7 @@ import {
   Line,
 } from "recharts";
 import { getDailyKlines } from "../services/binanceAPI";
-import "./volumeChart.css"; // ✅ Import CSS
+import "./VolumeChart.css"; // ✅ Import CSS
 
 const VolumeChart = ({ symbol = "BTCUSDT", interval = "1d", type = "bar" }) => {
   const [data, setData] = useState([]);
