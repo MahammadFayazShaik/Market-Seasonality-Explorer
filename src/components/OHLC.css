@@ -1,6 +1,5 @@
 .ohlc-section {
   background-color: rgb(15, 20, 31);
-  border-radius: 0.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.5);
   padding: 1.5rem;
   display: flex;
@@ -8,6 +7,8 @@
   gap: 2rem;
   margin-top: 80px;
   margin-right: 10px;
+  border: 1px solid rgb(69, 65, 65);
+  border-radius: 18px;
 }
 
 .ohlc-title {

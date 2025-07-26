@@ -60,7 +60,7 @@ const PriceChart = ({ symbol = "BTCUSDT", interval = "1d", totalCandles = 100 })
   return (
     <div className="chart-box">
       <h3>Price Movement ({symbol})</h3>
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={220}>
         <LineChart data={chartData}>
           <XAxis dataKey="time" />
           <YAxis />

@@ -1,0 +1,36 @@
+/* src/components/TradingView.css */
+.tv-wrapper {
+  background-color:rgb(15, 20, 31);
+  padding: 1rem;
+  color: white;
+   border: 1px solid rgb(69, 65, 65);
+  border-radius: 18px;
+  width: 97%;
+}
+
+.tv-controls {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tv-controls button,
+.tv-controls select {
+  background-color: #2a2a2a;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tv-controls button.active {
+  background-color: #4caf50;
+}
+
+.tv-chart {
+  width: 100%  !important;
+  height: 500px;
+  border-radius: 5px;
+}

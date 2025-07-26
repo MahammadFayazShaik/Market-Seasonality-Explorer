@@ -1,13 +1,12 @@
-// utils/binance.js or api.js
-
-import { all } from "axios";
+// src/services/binance.js
+import { fetchWithRetry } from "../utils/request";
 
 const BASE_URL = "https://api.binance.com/api/v3";
 
 export const getDailyKlines = async (
   symbol = "BTCUSDT",
   interval = "1d",
-  totalCandles = 2000
+  totalCandles = 500
 ) => {
   let allData = [];
   let endTime = Date.now();
@@ -16,8 +15,7 @@ export const getDailyKlines = async (
   try {
     while (allData.length < totalCandles) {
       const url = `${BASE_URL}/klines?symbol=${symbol}&interval=${interval}&limit=${limit}&endTime=${endTime}`;
-      const res = await fetch(url);
-      const data = await res.json();
+      const data = await fetchWithRetry(url, {}, 3, 300);
 
       if (!Array.isArray(data) || !data.length) break;
 
@@ -33,7 +31,7 @@ export const getDailyKlines = async (
 
         return {
           symbol,
-          time: d[0], // timestamp in ms
+          time: d[0],
           open,
           high,
           low,
@@ -44,21 +42,37 @@ export const getDailyKlines = async (
         };
       });
 
-      allData = [...parsedData, ...allData]; // prepend to keep chronological order
+      allData = [...parsedData, ...allData];
       endTime = data[0][0] - 1;
 
-      // Pause to avoid hitting rate limits (Binance allows ~10-20 reqs/sec per IP)
       await new Promise((resolve) => setTimeout(resolve, 200));
     }
 
-    return allData.slice(-totalCandles); // only latest N candles
+    // Trim to requested candles
+    const trimmedData = allData.slice(-totalCandles);
+
+    // Compute Moving Averages
+    for (let i = 0; i < trimmedData.length; i++) {
+      const closes = trimmedData.slice(Math.max(0, i - 6), i + 1).map(d => d.close);
+      trimmedData[i].ma7 = closes.length === 7 ? (closes.reduce((a, b) => a + b, 0) / 7) : null;
+
+      const closes14 = trimmedData.slice(Math.max(0, i - 13), i + 1).map(d => d.close);
+      trimmedData[i].ma14 = closes14.length === 14 ? (closes14.reduce((a, b) => a + b, 0) / 14) : null;
+    }
+
+    // Benchmark: compare last close to first close
+    const firstClose = trimmedData[0]?.close || 1;
+    const lastClose = trimmedData[trimmedData.length - 1]?.close || 1;
+    const benchmarkChange = ((lastClose - firstClose) / firstClose) * 100;
+
+    trimmedData[trimmedData.length - 1].benchmark = benchmarkChange;
+
+    return trimmedData;
   } catch (error) {
     console.error("Error fetching daily klines:", error);
     return [];
   }
 };
-
-
 
 export const getPriceAndVolumeData = async (
   symbol = "BTCUSDT",
@@ -67,7 +81,7 @@ export const getPriceAndVolumeData = async (
 ) => {
   const all = await getDailyKlines(symbol, interval, totalCandles);
 
-  return all.map(d => ({
+  return all.map((d) => ({
     time: d.time,
     open: d.open,
     high: d.high,
@@ -77,13 +91,10 @@ export const getPriceAndVolumeData = async (
   }));
 };
 
-
-
-
 export const getOrderBook = async (symbol = "BTCUSDT") => {
   try {
-    const res = await fetch(`${BASE_URL}/depth?symbol=${symbol}&limit=5`);
-    return await res.json();
+    const url = `${BASE_URL}/depth?symbol=${symbol}&limit=5`;
+    return await fetchWithRetry(url);
   } catch (error) {
     console.error("Error fetching order book:", error);
     return null;
@@ -92,8 +103,8 @@ export const getOrderBook = async (symbol = "BTCUSDT") => {
 
 export const getTickerStats = async (symbol = "BTCUSDT") => {
   try {
-    const res = await fetch(`${BASE_URL}/ticker/24hr?symbol=${symbol}`);
-    return await res.json();
+    const url = `${BASE_URL}/ticker/24hr?symbol=${symbol}`;
+    return await fetchWithRetry(url);
   } catch (error) {
     console.error("Error fetching ticker stats:", error);
     return null;

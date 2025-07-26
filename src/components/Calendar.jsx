@@ -107,10 +107,25 @@ const Calendar = ({ symbol = "BTCUSDT", viewType = "day", onDateSelect }) => {
     month === 11 ? (setMonth(0), setYear(year + 1)) : setMonth(month + 1);
 
   const calendarMatrix = getMonthMatrix(year, month);
+  const handleKeyDown = (e) => {
+  if (e.key === "ArrowLeft") {
+    goToPrevious(); // function that moves back
+  } else if (e.key === "ArrowRight") {
+    goToNext(); // function that moves forward
+  } else if (e.key === "Enter") {
+    // Optional: Focus today's date or open modal
+    goToToday();
+  } else if (e.key === "Escape") {
+    // Optional: Reset or close
+    console.log("Escape pressed - exit or reset action");
+  }
+};
+
 
   return (
     <div className="calendar-container-wrapper">
-      <div className="calendar-container">
+      <div className="calendar-container " tabIndex={0}
+  onKeyDown={handleKeyDown}>
         <div className="calendar-header">
           <h2 className="calendar-title">
             {new Date(year, month).toLocaleString("default", {

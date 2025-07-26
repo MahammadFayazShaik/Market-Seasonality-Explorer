@@ -1,6 +1,5 @@
-// src/components/dashboard/OHLCData.jsx
 import React, { useEffect, useState } from "react";
-import { getDailyKlines } from "../services/binanceAPI"; // double check this path
+import { getDailyKlines } from "../services/binanceAPI";
 import "./OHLC.css";
 
 const OHLCData = ({ symbol, interval = "1d" }) => {
@@ -14,7 +13,6 @@ const OHLCData = ({ symbol, interval = "1d" }) => {
       setLoading(true);
       try {
         const data = await getDailyKlines(symbol, interval, 500);
-
         if (data && data.length > 0) {
           const latest = data[data.length - 1];
           setOhlc(latest);
@@ -29,15 +27,8 @@ const OHLCData = ({ symbol, interval = "1d" }) => {
     fetchOHLC();
   }, [symbol, interval]);
 
-  if (loading || !ohlc) {
-    return (
-      <div className="text-gray-400 text-sm text-center">
-        Loading OHLC data for <b>{symbol}</b>...
-      </div>
-    );
-  }
-
-  const { open, high, low, close } = ohlc;
+  // 👇 This prevents crash without early return
+  const { open, high, low, close } = ohlc || {};
 
   return (
     <div className="ohlc-section">
@@ -45,19 +36,27 @@ const OHLCData = ({ symbol, interval = "1d" }) => {
       <div className="ohlc-grid">
         <div>
           <div>Open</div>
-          <div className="ohlc-value">${open?.toLocaleString()}</div>
+          <div className="ohlc-value">
+            {open ? `$${open.toLocaleString()}` : "--"}
+          </div>
         </div>
         <div>
           <div>High</div>
-          <div className="ohlc-value text-green">${high?.toLocaleString()}</div>
+          <div className="ohlc-value text-green">
+            {high ? `$${high.toLocaleString()}` : "--"}
+          </div>
         </div>
         <div>
           <div>Low</div>
-          <div className="ohlc-value text-red">${low?.toLocaleString()}</div>
+          <div className="ohlc-value text-red">
+            {low ? `$${low.toLocaleString()}` : "--"}
+          </div>
         </div>
         <div>
           <div>Close</div>
-          <div className="ohlc-value text-blue">${close?.toLocaleString()}</div>
+          <div className="ohlc-value text-blue">
+            {close ? `$${close.toLocaleString()}` : "--"}
+          </div>
         </div>
       </div>
     </div>

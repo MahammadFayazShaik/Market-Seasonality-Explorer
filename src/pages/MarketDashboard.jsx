@@ -7,6 +7,8 @@ import Card from "../components/Card";
 import TopNavbar from "../components/TopNavbar";
 import "./MarketDashboard.css";
 import CardsOverview from "../components/CardsOverview";
+import OrderBook from "../components/OrderBook";
+import TradingView from "../components/TradingView"
 
 const MarketDashboard = () => {
   const [selectedSymbol, setSelectedSymbol] = useState("BTCUSDT");
@@ -37,6 +39,17 @@ const MarketDashboard = () => {
               <CardsOverview symbol={selectedSymbol} viewType={viewType} />
             </div>
           </div>
+        </div>
+        <div className="chart-Card vertical-Stack">
+            <TradingView  symbol={selectedSymbol} viewType={viewType} />
+
+                  </div>
+        <div className="dualChartRow">
+          <div className="chartCard">
+            <OrderBook symbol={selectedSymbol}/>
+          </div>
+          
+          
         </div>
 
         {/* Bottom Section: Volume and Price Charts */}
