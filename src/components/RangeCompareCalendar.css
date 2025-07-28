@@ -1,0 +1,65 @@
+.range-comparison-panel {
+  padding: 2rem;
+  background: #1e1e2f;
+  color: #ffffff;
+  border-radius: 16px;
+ 
+  width: 90%;
+}
+
+.range-pickers {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.range-pickers-comparison {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.date-picker-box {
+  padding: 1rem;
+  border-radius: 12px;
+  flex: 1;
+  min-width: 280px;
+}
+
+.date-range-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.date-range-picker label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #90caf9;
+  margin-right: 0.5rem;
+}
+
+.date-range-picker input[type="date"] {
+  background: #1c1c2e;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  width: 140px;
+}
+
+.date-range-picker input[type="date"]:focus {
+  outline: 2px solid #90caf9;
+}
+
+
+
+

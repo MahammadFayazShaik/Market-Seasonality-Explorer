@@ -1,13 +1,21 @@
-// src/components/TopNavbar.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { BarChart2, Download, Settings } from "lucide-react";
 import "./TopNavbar.css";
+import { exportCalendarToPDF } from "../utils/exportUtils";
 
-const TopNavbar = ({ selectedSymbol, onSymbolChange, viewType, onViewChange }) => {
+const TopNavbar = ({
+  selectedSymbol,
+  onSymbolChange,
+  viewType,
+  onViewChange,
+}) => {
   const [allSymbols, setAllSymbols] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredSymbols, setFilteredSymbols] = useState([]);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [symbolDropdownOpen, setSymbolDropdownOpen] = useState(false);
+  const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
+  const [theme, setTheme] = useState("default");
+
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -24,7 +32,6 @@ const TopNavbar = ({ selectedSymbol, onSymbolChange, viewType, onViewChange }) =
         console.error("Failed to fetch symbols:", err);
       }
     };
-
     fetchSymbols();
   }, []);
 
@@ -38,7 +45,8 @@ const TopNavbar = ({ selectedSymbol, onSymbolChange, viewType, onViewChange }) =
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
+        setSymbolDropdownOpen(false);
+        setThemeDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -48,7 +56,12 @@ const TopNavbar = ({ selectedSymbol, onSymbolChange, viewType, onViewChange }) =
   const handleSelect = (symbol) => {
     onSymbolChange(symbol);
     setSearchTerm("");
-    setDropdownOpen(false);
+    setSymbolDropdownOpen(false);
+  };
+
+  const handleThemeChange = (newTheme) => {
+    setTheme(newTheme);
+    document.body.setAttribute("data-theme", newTheme);
   };
 
   return (
@@ -64,14 +77,15 @@ const TopNavbar = ({ selectedSymbol, onSymbolChange, viewType, onViewChange }) =
       </div>
 
       <div className="panel-right">
+        {/* Symbol Dropdown */}
         <div className="custom-dropdown" ref={dropdownRef}>
           <div
             className="custom-dropdown-toggle"
-            onClick={() => setDropdownOpen((prev) => !prev)}
+            onClick={() => setSymbolDropdownOpen((prev) => !prev)}
           >
             {selectedSymbol || "Select Symbol"}
           </div>
-          {dropdownOpen && (
+          {symbolDropdownOpen && (
             <div className="custom-dropdown-menu">
               <input
                 type="text"
@@ -95,6 +109,7 @@ const TopNavbar = ({ selectedSymbol, onSymbolChange, viewType, onViewChange }) =
           )}
         </div>
 
+        {/* View Type Buttons */}
         <div className="view-toggle">
           {["day", "week", "month"].map((view) => (
             <button
@@ -109,13 +124,62 @@ const TopNavbar = ({ selectedSymbol, onSymbolChange, viewType, onViewChange }) =
 
         <span className="live-badge">LIVE</span>
 
-        <button className="export-btn">
-          <Download size={16} style={{ marginRight: "4px" }} />
-          Export
-        </button>
-        <button className="settings-btn">
-          <Settings size={16} />
-        </button>
+        {/* Export Button */}
+        <div className="export-dropdown">
+          <button
+            className="export-btn"
+            onClick={() =>
+              exportCalendarToPDF("export-container", "market-dashboard.pdf")
+            }
+          >
+            <Download size={16} style={{ marginRight: "4px" }} />
+            Export
+          </button>
+        </div>
+
+        {/* Theme Settings Dropdown */}
+        <div className="theme-toggle" style={{ position: "relative" }}>
+          <button
+            className="settings-btn"
+            onClick={() => setThemeDropdownOpen((prev) => !prev)}
+          >
+            <Settings size={16} />
+          </button>
+
+          {themeDropdownOpen && (
+            <div className="theme-dropdown-menu">
+              <button
+                className={`theme-btn ${theme === "default" ? "active" : ""}`}
+                onClick={() => {
+                  handleThemeChange("default");
+                  setThemeDropdownOpen(false);
+                }}
+              >
+                Default
+              </button>
+              <button
+                className={`theme-btn ${
+                  theme === "high-contrast" ? "active" : ""
+                }`}
+                onClick={() => {
+                  handleThemeChange("high-contrast");
+                  setThemeDropdownOpen(false);
+                }}
+              >
+                High Contrast
+              </button>
+              <button
+                className={`theme-btn ${theme === "colorblind" ? "active" : ""}`}
+                onClick={() => {
+                  handleThemeChange("colorblind");
+                  setThemeDropdownOpen(false);
+                }}
+              >
+                Colorblind
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

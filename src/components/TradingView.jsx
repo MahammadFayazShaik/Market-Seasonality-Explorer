@@ -7,7 +7,7 @@ import {
   BaselineSeries,
   CandlestickSeries,
 } from "lightweight-charts";
-import { getDailyKlines } from "../services/binanceAPI";
+import { getDailyKlines } from "../services/binanceAPI"; // assumes this supports intraday
 import "./TradingView.css";
 
 const chartTypes = {
@@ -17,12 +17,30 @@ const chartTypes = {
   baseline: BaselineSeries,
 };
 
+const intervalMap = {
+  "1D": "1m",   // 1-minute candles for 1 day
+  "1W": "5m",   // 5-minute candles for 7 days
+  "1M": "1h",   // 1-hour candles for 30 days
+  "1Y": "1d",   // 1-day candles
+  "5Y": "1d",
+  "ALL": "1d",
+};
+
+const limitMap = {
+  "1D": 1440,       // 24 * 60 minutes
+  "1W": 7 * 24 * 12, // 5-minute intervals
+  "1M": 720,         // 30 days * 24 hours
+  "1Y": 365,
+  "5Y": 365 * 5,
+  "ALL": 15000,
+};
+
 const TradingView = ({ symbol = "BTCUSDT" }) => {
   const chartContainerRef = useRef();
   const chartRef = useRef();
   const seriesRef = useRef();
   const [loading, setLoading] = useState(true);
-  const [interval, setInterval] = useState("1d");
+  const [intervalLabel, setIntervalLabel] = useState("1D");
   const [chartType, setChartType] = useState("candlestick");
 
   useEffect(() => {
@@ -45,64 +63,82 @@ const TradingView = ({ symbol = "BTCUSDT" }) => {
           background: { type: "solid", color: "white" },
         },
         grid: {
-          vertLines: { color: "#ccc" },
-          horzLines: { color: "#ccc" },
+          vertLines: { color: "#eee" },
+          horzLines: { color: "#eee" },
         },
         width: chartContainerRef.current.clientWidth,
         height: 500,
+        crosshair: {
+          mode: 1, // normal crosshair
+        },
+        timeScale: {
+          timeVisible: true,
+          secondsVisible: intervalLabel === "1D", // show seconds on 1D
+        },
       });
 
       chartRef.current = chart;
 
-      const data = await getDailyKlines(symbol, interval);
-      const formatted = data.map((d) => ({
-        time: d.time / 1000,
-        open: d.open,
-        high: d.high,
-        low: d.low,
-        close: d.close,
-        value: d.close, // for Area/Baseline/Bar series
-      }));
+      const interval = intervalMap[intervalLabel] || "1d";
+      const limit = limitMap[intervalLabel] || 30;
 
-      const seriesOptions = {
-        candlestick: {
-          upColor: "#26a69a",
-          downColor: "#ef5350",
-          borderVisible: false,
-          wickUpColor: "#26a69a",
-          wickDownColor: "#ef5350",
-        },
-        area: {
-          lineColor: "#2962FF",
-          topColor: "#2962FF",
-          bottomColor: "rgba(41, 98, 255, 0.28)",
-        },
-        bar: {
-          upColor: "#4caf50",
-          downColor: "#f44336",
-        },
-        baseline: {
-          baseValue: { type: "price", price: formatted[0]?.close || 0 },
-          topLineColor: "#26a69a",
-          bottomLineColor: "#ef5350",
-          lineWidth: 2,
-        },
-      };
+      try {
+        const data = await getDailyKlines(symbol, interval, limit);
 
-      const series = chart.addSeries(
-        chartTypes[chartType],
-        seriesOptions[chartType]
-      );
+        const formatted = data.map((d) => ({
+          time: d.time / 1000, // UNIX timestamp in seconds
+          open: d.open,
+          high: d.high,
+          low: d.low,
+          close: d.close,
+          value: d.close,
+        }));
 
-      // Set data depending on series type
-      if (chartType === "candlestick") {
-        series.setData(formatted);
-      } else {
-        series.setData(formatted.map(({ time, value }) => ({ time, value })));
+        const seriesOptions = {
+          candlestick: {
+            upColor: "#26a69a",
+            downColor: "#ef5350",
+            borderVisible: false,
+            wickUpColor: "#26a69a",
+            wickDownColor: "#ef5350",
+          },
+          area: {
+            lineColor: "#2962FF",
+            topColor: "#2962FF",
+            bottomColor: "rgba(41, 98, 255, 0.28)",
+          },
+          bar: {
+            upColor: "#4caf50",
+            downColor: "#f44336",
+          },
+          baseline: {
+            baseValue: { type: "price", price: formatted[0]?.close || 0 },
+            topLineColor: "#26a69a",
+            bottomLineColor: "#ef5350",
+            lineWidth: 2,
+          },
+        };
+
+        const series = chart.addSeries(
+          chartTypes[chartType],
+          seriesOptions[chartType]
+        );
+
+        if (chartType === "candlestick") {
+          series.setData(formatted);
+        } else {
+          series.setData(
+            formatted.map(({ time, value }) => ({ time, value }))
+          );
+        }
+
+        seriesRef.current = series;
+
+        chart.timeScale().fitContent();
+      } catch (err) {
+        console.error("Failed to load data:", err);
       }
 
-      seriesRef.current = series;
-      chart.timeScale().fitContent();
       setLoading(false);
     };
 
@@ -111,18 +147,18 @@ const TradingView = ({ symbol = "BTCUSDT" }) => {
     return () => {
       if (chartRef.current) chartRef.current.remove();
     };
-  }, [symbol, interval, chartType]);
+  }, [symbol, intervalLabel, chartType]);
 
   return (
     <div className="tv-wrapper">
       <div className="tv-controls">
-        {["1d", "1w", "1M"].map((int) => (
+        {Object.keys(intervalMap).map((label) => (
           <button
-            key={int}
-            className={interval === int ? "active" : ""}
-            onClick={() => setInterval(int)}
+            key={label}
+            className={intervalLabel === label ? "active" : ""}
+            onClick={() => setIntervalLabel(label)}
           >
-            {int.toUpperCase()}
+            {label}
           </button>
         ))}
         {Object.keys(chartTypes).map((type) => (

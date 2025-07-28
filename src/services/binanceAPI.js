@@ -74,6 +74,9 @@ export const getDailyKlines = async (
   }
 };
 
+
+
+
 export const getPriceAndVolumeData = async (
   symbol = "BTCUSDT",
   interval = "1d",
@@ -110,3 +113,14 @@ export const getTickerStats = async (symbol = "BTCUSDT") => {
     return null;
   }
 };
+
+
+// binanceAPI.js
+export const getKlinesRange = async (symbol, interval, startTime, endTime) => {
+  const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&startTime=${new Date(startTime).getTime()}&endTime=${new Date(endTime).getTime()}`;
+  const response = await fetch(url);
+  return await response.json();
+};
+
+
+

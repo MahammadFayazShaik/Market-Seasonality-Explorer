@@ -40,3 +40,12 @@
 .read-the-docs {
   color: #888;
 }
+
+
+/* index.css or App.css */
+@media print {
+  body {
+    height: auto;
+    margin: 0;
+  }
+}

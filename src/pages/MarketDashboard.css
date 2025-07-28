@@ -4,6 +4,7 @@
   min-height: 100vh;
   padding: 1.5rem;
   color: white;
+  
 }
 
 /* Overall container */
@@ -12,6 +13,9 @@
   flex-direction: column;
   gap: 2rem;
   margin-left: -30px;
+  overflow: hidden;
+height: auto;
+
 }
 
 /* --- TOP SECTION --- */
@@ -44,6 +48,13 @@
   border-radius: 0.5rem;
   padding: 1.5rem;
   flex: 1;
+}
+
+.chartCard2 {
+  flex: 0;
+  justify-content: flex-end;
+  align-items: flex-end;
+  margin-top: 60px;
 }
 
 .chart-Card {
@@ -114,4 +125,42 @@
   flex-direction: column;
   gap: 1rem;
   
+}
+
+
+
+
+
+
+#pdf-page-1 {
+
+ width: 100%;
+  min-height: 1122px; /* Approx A4 height in px at 96dpi */
+  padding: 20px;
+
+}
+#pdf-page-2 {
+  width: 100%;
+  min-height: 1122px; /* Approx A4 height in px at 96dpi */
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin-bottom : -600px;
+}
+
+.sideBySideSection {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.sideBySideSection .chartCard {
+  flex: 1;
+  min-width: 320px;
+}
+
+.narrowCard {
+  flex: 0.6;
+  min-width: 300px; /* Instead of 700px */
 }

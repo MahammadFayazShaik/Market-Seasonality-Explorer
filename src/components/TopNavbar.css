@@ -121,6 +121,49 @@
   background-color: #3e3e3e;
 }
 
+/* Settings Dropdown with View Toggle */
+.settings-wrapper {
+  position: relative;
+}
+
+.settings-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background-color: #1f1f27;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 10px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 160px;
+}
+
+.settings-view-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-view-toggle .view-btn {
+  width: 100%;
+  text-align: left;
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background-color: #2a2a2a;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.settings-view-toggle .view-btn.active,
+.settings-view-toggle .view-btn:hover {
+  background-color: #3e8eff;
+}
 
 
 .custom-dropdown {
@@ -246,3 +289,32 @@
     align-self: flex-start;
   }
 }
+
+
+
+.theme-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #2a2a2a;
+  border-radius: 8px;
+  padding: 8px 0;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.theme-btn {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  background: none;
+  color: white;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.theme-btn.active {
+  background-color: #444;
+}
+
