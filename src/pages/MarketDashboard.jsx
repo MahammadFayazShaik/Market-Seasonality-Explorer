@@ -56,7 +56,7 @@ const MarketDashboard = () => {
     setDataForRangeA(dataA);
     setDataForRangeB(dataB);
   };
-
+word
   return (
     <div className="pageWrapper">
       <TopNavbar
@@ -113,17 +113,15 @@ const MarketDashboard = () => {
 
           {/* Volume and Price Charts */}
           <div id="pdf-page-2">
-            <div className="dualChartRow">
-              <div className="chartCard">
+              <div className="chart-Card vertical-Stack">
                 <VolumeChart
                   symbol={selectedSymbol}
                   viewType={viewType}
                   type="bar"
                 />
               </div>
-              <div className="chartCard">
+              <div className="chart-Card vertical-Stack">
                 <PriceChart symbol={selectedSymbol} viewType={viewType} />
-              </div>
             </div>
           </div>
 

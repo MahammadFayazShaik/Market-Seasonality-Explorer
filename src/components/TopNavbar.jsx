@@ -137,49 +137,7 @@ const TopNavbar = ({
           </button>
         </div>
 
-        {/* Theme Settings Dropdown */}
-        <div className="theme-toggle" style={{ position: "relative" }}>
-          <button
-            className="settings-btn"
-            onClick={() => setThemeDropdownOpen((prev) => !prev)}
-          >
-            <Settings size={16} />
-          </button>
-
-          {themeDropdownOpen && (
-            <div className="theme-dropdown-menu">
-              <button
-                className={`theme-btn ${theme === "default" ? "active" : ""}`}
-                onClick={() => {
-                  handleThemeChange("default");
-                  setThemeDropdownOpen(false);
-                }}
-              >
-                Default
-              </button>
-              <button
-                className={`theme-btn ${
-                  theme === "high-contrast" ? "active" : ""
-                }`}
-                onClick={() => {
-                  handleThemeChange("high-contrast");
-                  setThemeDropdownOpen(false);
-                }}
-              >
-                High Contrast
-              </button>
-              <button
-                className={`theme-btn ${theme === "colorblind" ? "active" : ""}`}
-                onClick={() => {
-                  handleThemeChange("colorblind");
-                  setThemeDropdownOpen(false);
-                }}
-              >
-                Colorblind
-              </button>
-            </div>
-          )}
-        </div>
+        
       </div>
     </div>
   );
