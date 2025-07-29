@@ -56,7 +56,6 @@ const MarketDashboard = () => {
     setDataForRangeA(dataA);
     setDataForRangeB(dataB);
   };
-word
   return (
     <div className="pageWrapper">
       <TopNavbar
